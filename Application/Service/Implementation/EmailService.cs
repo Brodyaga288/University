@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using System.Text;
 using Application.Service.Interface;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
@@ -25,9 +26,19 @@ public class EmailService : IEmailService
     }
     public async Task SendEmailAsync(string to, string subject, string body)
     {
+        if (string.IsNullOrWhiteSpace(to))
+        {
+            throw new ArgumentException("Email-адрес не может быть пустым.");
+        }
+
+        if (!to.Contains("@"))
+        {
+            throw new ArgumentException("Некорректный email-адрес.");
+        }
+        Console.WriteLine($"Отправка email на адрес: '{to}'");
         var email = new MimeMessage();
-        email.From.Add(new MailboxAddress(_smtpUsername, _smtpPassword));
-        email.To.Add(MailboxAddress.Parse(to));
+        email.From.Add(new MailboxAddress(Encoding.UTF8, subject, _smtpUsername));
+        email.To.Add(new MailboxAddress(Encoding.UTF8, "", to));
         email.Subject = subject;
         email.Body = new TextPart(TextFormat.Html) { Text = body };
         
@@ -49,10 +60,10 @@ public class EmailService : IEmailService
     {
         try
         {
-            var mailAddress = new MailAddress(email);
-            return true;
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == email;
         }
-        catch (FormatException)
+        catch
         {
             return false;
         }

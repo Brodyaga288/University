@@ -25,6 +25,16 @@ public class PasswordController : Controller
      [HttpPost("forgot-password")]
      public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO model)
      {
+         if (string.IsNullOrWhiteSpace(model.Email))
+         {
+             return BadRequest(new { Message = "Email-адрес не может быть пустым." });
+         }
+
+         if (!model.Email.Contains("@"))
+         {
+             return BadRequest(new { Message = "Некорректный email-адрес." });
+         }
+         
          var user = await _userManager.FindByEmailAsync(model.Email); 
          if (user == null)
          {
@@ -38,7 +48,7 @@ public class PasswordController : Controller
          var emailBody = $"Для сброса пароля перейдите по ссылке: <a href='{resetLink}'>Сбросить пароль</a>";
          await _emailService.SendEmailAsync(model.Email, "Сброс пароля", emailBody);
 
-         return Ok(new { Message = "Ссылка для сброса пароля отправлена на ваш email." });
+         return Ok(new { Message = $"Ссылка для сброса пароля отправлена на ваш email. {token}" });
      }
 
      [HttpPost("reset-password")]
