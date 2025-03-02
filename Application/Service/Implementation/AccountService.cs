@@ -30,6 +30,7 @@ public class AccountService : IAccountService
         {
             UserName = model.UserName, // Используем UserName
             FullName = model.FullName,
+            Email = model.Email,
         };
         
         var result = await _userManager.CreateAsync(user, model.Password);
