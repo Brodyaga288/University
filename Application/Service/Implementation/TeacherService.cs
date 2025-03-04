@@ -43,6 +43,7 @@ public class TeacherService
     {
         try
         {
+            entity.DateOfBirth.ToUniversalTime();
             return _mapper.Map<TeacherDTO>(await _rep.AddAsync(_mapper.Map<Teacher>(entity)));
         }
         catch (Exception e)
@@ -55,6 +56,7 @@ public class TeacherService
     {
         try
         {
+            entity.DateOfBirth.ToUniversalTime();
             return _mapper.Map<TeacherDTO>(await _rep.UpdateAsync(_mapper.Map<Teacher>(entity)));
         }
         catch (Exception e)

@@ -1,4 +1,5 @@
 using Application.Service.Implementation;
+using AutoMapper;
 using Infrastructure.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +12,18 @@ namespace WebApi.Controllers.Student;
 public class StudentAdminController : Controller
 {
     private readonly StudentService _studentService;
-    public StudentAdminController(StudentService studentService)
+    private readonly ImageService _imageService;
+    public StudentAdminController(StudentService studentService, ImageService imageService)
     {
         _studentService = studentService;
+        _imageService = imageService;
     }
     
     [HttpPost("AddStudent")]
     public async Task<IActionResult> CreateStubent([FromBody]StudentDTO student)
     {
+        
+        student.PhotoUrl = await _imageService.ChangingImage(student.PhotoUrl);
         var result = await _studentService.AddAsync(student);
         return Ok(result);
     }
@@ -26,6 +31,7 @@ public class StudentAdminController : Controller
     [HttpPut("UpdateStudent")]
     public async Task<IActionResult> UpdateStudent([FromBody] StudentDTO student)
     {
+        student.PhotoUrl = await _imageService.ChangingImage(student.PhotoUrl);
         var result = await _studentService.UpdateAsync(student);
         return Ok(result);
     }

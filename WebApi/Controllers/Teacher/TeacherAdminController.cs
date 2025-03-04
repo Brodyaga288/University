@@ -11,14 +11,17 @@ namespace WebApi.Controllers.Teacher;
 public class TeacherAdminController : Controller
 {
     private readonly TeacherService _teacherService;
-    public TeacherAdminController(TeacherService teacherService)
+    private readonly ImageService _imageService;
+    public TeacherAdminController(TeacherService teacherService, ImageService imageService)
     {
         _teacherService = teacherService;
+        _imageService = imageService;
     }
     
     [HttpPost("AddTeacher")]
     public async Task<IActionResult> CreateTeacher([FromBody]TeacherDTO teacher)
     {
+        teacher.PhotoUrl = await _imageService.ChangingImage(teacher.PhotoUrl);
         var result = await _teacherService.AddAsync(teacher);
         return Ok(result);
     }
@@ -26,6 +29,7 @@ public class TeacherAdminController : Controller
     [HttpPut("UpdateTeacher")]
     public async Task<IActionResult> UpdateTeacher([FromBody] TeacherDTO teacher)
     {
+        teacher.PhotoUrl = await _imageService.ChangingImage(teacher.PhotoUrl);
         var result = await _teacherService.UpdateAsync(teacher);
         return Ok(result);
     }

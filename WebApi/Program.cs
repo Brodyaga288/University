@@ -34,8 +34,10 @@ builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidator
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<SubjectValidate>());
 builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<TeacherValidate>());*/
 
+builder.Services.AddHttpClient<ImageService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<CourseService>();
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<StudentService>();

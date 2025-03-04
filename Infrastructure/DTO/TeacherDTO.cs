@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Infrastructure.DTO;
 
 public class TeacherDTO
 {
+    [JsonIgnore]
     public Guid Id { get; set; }
     public string FullName { get; set; }
     public DateTime DateOfBirth { get; set; }
