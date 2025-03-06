@@ -24,16 +24,16 @@ public class GroupAdminController : Controller
     }
 
     [HttpPut("UpdateGroup")]
-    public async Task<IActionResult> UpdateCourse([FromBody] GroupDTO group)
+    public async Task<IActionResult> UpdateGroup([FromBody] GroupDTO group)
     {
         var result = await _groupService.UpdateAsync(group);
         return Ok(result);
     }
 
     [HttpDelete("DeleteGroup/{id}")]
-    public async Task<IActionResult> DeleteCourse(Guid courseId)
+    public async Task<IActionResult> DeleteGroup(Guid groupId)
     {
-        var result = await _groupService.DeleteAsync(courseId);
+        var result = await _groupService.DeleteAsync(groupId);
         return Ok(result);
     }
 }

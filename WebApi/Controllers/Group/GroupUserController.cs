@@ -32,9 +32,9 @@ public class GroupUserController : Controller
     }
 
     [HttpGet("GetGroup/{id}")]
-    public async Task<IActionResult> GetGroup(Guid courseId)
+    public async Task<IActionResult> GetGroup(Guid groupId)
     {
-        var Group = await _groupService.GetAsync(courseId);
+        var Group = await _groupService.GetAsync(groupId);
         
         if (Group is null)
         {

@@ -21,7 +21,7 @@ public class AccountController : Controller
         try
         {
             var token = await _authService.RegisterAsync(model);
-            return Ok(new {Model = model, Token = token });
+            return Ok(new {Model = model, Result = token });
         }
         catch (Exception ex)
         {
