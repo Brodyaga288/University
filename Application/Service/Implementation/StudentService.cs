@@ -1,3 +1,4 @@
+using Application.Service.Interface;
 using AutoMapper;
 using Domain.Models;
 using Infrastructure.DTO;
@@ -8,18 +9,20 @@ namespace Application.Service.Implementation;
 public class StudentService
 {
     private readonly IStudentRepository _rep;
+    private readonly IImageService _imageService;
     private readonly IMapper _mapper;
 
-    public StudentService(IStudentRepository studentRepository, IMapper mapper)
+    public StudentService(IStudentRepository studentRepository, IMapper mapper, IImageService imageService)
     {
         _rep = studentRepository;
         _mapper = mapper;
+        _imageService = imageService;
     }
-    public async Task<IEnumerable<StudentDTO>> GetAllAsync()
+    public async Task<IEnumerable<StudentResponseDTO>> GetAllAsync()
     {
         try
         {
-            return _mapper.Map<IEnumerable<StudentDTO>>(await _rep.GetAllAsync());
+            return _mapper.Map<IEnumerable<StudentResponseDTO>>(await _rep.GetAllAsync());
         }
         catch (Exception e)
         {
@@ -27,11 +30,11 @@ public class StudentService
         }
     }
 
-    public async Task<StudentDTO> GetAsync(Guid id)
+    public async Task<StudentResponseDTO> GetAsync(Guid id)
     {
         try
         {
-            return _mapper.Map<StudentDTO>(await _rep.GetByIdAsync(id));
+            return _mapper.Map<StudentResponseDTO>(await _rep.GetByIdAsync(id));
         }
         catch (Exception e)
         {
@@ -39,12 +42,20 @@ public class StudentService
         }
     }
 
-    public async Task<StudentDTO> AddAsync(StudentDTO entity)
+    public async Task<StudentResponseDTO> AddAsync(StudentRequestDTO entity)
     {
         try
         {
-            entity.DateOfBirth.ToUniversalTime();
-            return _mapper.Map<StudentDTO>(await _rep.AddAsync(_mapper.Map<Student>(entity)));
+            Student student = new Student()
+            {
+                Id = entity.Id,
+                DateOfBirth = entity.DateOfBirth.ToUniversalTime(),
+                Description = entity.Description,
+                FullName = entity.FullName,
+                PhotoUrl = await _imageService.ChangingImage(entity.Photo),
+                GroupId = entity.GroupId,
+            };
+            return _mapper.Map<StudentResponseDTO>(await _rep.AddAsync(_mapper.Map<Student>(student)));
         }
         catch (Exception e)
         {
@@ -52,12 +63,20 @@ public class StudentService
         }
     }
 
-    public async Task<StudentDTO> UpdateAsync(StudentDTO entity)
+    public async Task<StudentResponseDTO> UpdateAsync(StudentRequestDTO entity)
     {
         try
         {
-            entity.DateOfBirth.ToUniversalTime();
-            return _mapper.Map<StudentDTO>(await _rep.UpdateAsync(_mapper.Map<Student>(entity)));
+            Student student = new Student()
+            {
+                Id = entity.Id,
+                DateOfBirth = entity.DateOfBirth.ToUniversalTime(),
+                Description = entity.Description,
+                FullName = entity.FullName,
+                PhotoUrl = await _imageService.ChangingImage(entity.Photo),
+                GroupId = entity.GroupId,
+            };
+            return _mapper.Map<StudentResponseDTO>(await _rep.UpdateAsync(_mapper.Map<Student>(student)));
         }
         catch (Exception e)
         {

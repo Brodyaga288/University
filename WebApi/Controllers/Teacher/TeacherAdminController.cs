@@ -19,18 +19,18 @@ public class TeacherAdminController : Controller
     }
     
     [HttpPost("AddTeacher")]
-    public async Task<IActionResult> CreateTeacher([FromBody]TeacherDTO teacher)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> CreateTeacher([FromForm]TeacherRequestDTO teacherRequest)
     {
-        teacher.PhotoUrl = await _imageService.ChangingImage(teacher.PhotoUrl);
-        var result = await _teacherService.AddAsync(teacher);
+        var result = await _teacherService.AddAsync(teacherRequest);
         return Ok(result);
     }
 
     [HttpPut("UpdateTeacher")]
-    public async Task<IActionResult> UpdateTeacher([FromBody] TeacherDTO teacher)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UpdateTeacher([FromForm] TeacherRequestDTO teacherRequest)
     {
-        teacher.PhotoUrl = await _imageService.ChangingImage(teacher.PhotoUrl);
-        var result = await _teacherService.UpdateAsync(teacher);
+        var result = await _teacherService.UpdateAsync(teacherRequest);
         return Ok(result);
     }
 

@@ -1,5 +1,6 @@
 using Application.Service.Interface;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Service.Implementation;
 
@@ -7,22 +8,15 @@ public class ImageService : IImageService
 {
     private readonly HttpClient _httpClient;
 
-    public ImageService(HttpClient httpClient, IWebHostEnvironment env)
+    public ImageService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
-    public async Task<string> ChangingImage(string imageUrl)
+    public async Task<string> ChangingImage(IFormFile file)
     {
         try
         {
-            var response = await _httpClient.GetAsync(imageUrl);
-            if (!response.IsSuccessStatusCode)
-                throw new Exception("Не удалось загрузить изображение");
-
-            await using var imageStream = await response.Content.ReadAsStreamAsync();
-            
-            var fileExtension = Path.GetExtension(imageUrl).ToLower();
-            var fileName = $"{Guid.NewGuid()}{fileExtension}";
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
             var savePath = $"{Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.Parent}\\src\\Images";
             if (!Directory.Exists(savePath))
@@ -31,7 +25,7 @@ public class ImageService : IImageService
             var filePath = Path.Combine(savePath, fileName);
             
             await using var fileStream = new FileStream(filePath, FileMode.Create);
-            await imageStream.CopyToAsync(fileStream);
+            await file.CopyToAsync(fileStream);
             
             var savedUrl = $"{savePath}\\{fileName}";
             return savedUrl;
